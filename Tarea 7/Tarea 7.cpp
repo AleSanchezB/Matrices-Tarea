@@ -164,6 +164,7 @@ Matriz** Crear(int n, int m)
 	}
 	return matriz;
 }
+
 Matriz** MatrizTranspuesta(Matriz** matriz, int n, int m)
 {
 	Matriz** transpuesta = Crear(m, n);
