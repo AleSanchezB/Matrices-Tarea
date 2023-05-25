@@ -1,39 +1,73 @@
 #include "Operaciones.h"
 
-Matriz** leerArchivo()
+Matriz** LeerArchivo(int n[], int m[], int indice)
 {
-	char nombreArchivo[100];
+	char titulo[100];
 	Matriz** matriz;
-	int n, m;
+	char extension[] = ".txt";
+
 	std::cout << "Ingrese el nombre del archivo a leer: " << std::endl;
-	std::cin.getline(nombreArchivo, 50);
-
-	std::ifstream archivo(nombreArchivo);
-
-	if (!archivo.is_open())
+	std::cin >> titulo;
+	
+	int i = 0;
+	while (titulo[i] != '\0')
 	{
-		//std::cout << "No se pudo abrir el archivo." << std::endl;
+		++i;
+	}
+
+	int j = 0;
+	while (extension[j] != '\0')
+	{
+		titulo[i] = extension[j];
+		++i;
+		++j;
+	}
+	titulo[i] = '\0';
+
+	std::ifstream archivo(titulo);
+
+	if (!archivo)
+	{
 		throw std::exception("No se pudo abrir el archivo");
 	}
-	else
+
+	archivo >> n[indice] >> m[indice];
+	matriz = Crear(n[indice], m[indice]);
+	for (int i = 0; i < n[indice]; i++)
 	{
-		archivo >> n >> m;
-		matriz = Crear(n, m);
-		for (int i = 0; i < n; i++)
+		for (int j = 0; j < m[indice]; j++)
 		{
-			for (int j = 0; j < m; j++)
-			{
-				archivo >> matriz[i][j];
-			}
+			archivo >> matriz[i][j];
 		}
 	}
+
 	archivo.close();
 	return matriz;
 }
 void GuardarMatrizEnArchivo()
 {
 	int n, m;
-	char titulo;
+	char titulo[100];
+	char extension[] = ".txt";
+
+	std::cout << "Dame el nombre del archivo donde deseas guardalo: " << std::endl;
+	std::cin >> titulo;
+
+	int i = 0;
+	while (titulo[i] != '\0')
+	{
+		++i;
+	}
+
+	int j = 0;
+	while (extension[j] != '\0')
+	{
+		titulo[i] = extension[j];
+		++i;
+		++j;
+	}
+
+	titulo[i] = '\0';
 
 	std::cout << "Dame el numero de filas de la matriz: " << std::endl;
 	std::cin >> n;
@@ -41,10 +75,8 @@ void GuardarMatrizEnArchivo()
 	std::cout << "Dame el numero de columnas de la matriz: " << std::endl;
 	std::cin >> m;
 
-	std::cout << "Dame el nombre del archivo donde deseas guardalo: " << std::endl;
-	std::cin >> titulo;
 
-	std::ofstream archivo(titulo + ".txt");
+	std::ofstream archivo(titulo);
 
 	int x;
 	archivo << n << " " << m << '\n';
@@ -61,6 +93,45 @@ void GuardarMatrizEnArchivo()
 	archivo.close();
 	std::cout << "Archivo guardado correctamente." << std::endl;
 }
+
+void GuardarResultadoEnArchivo(Matriz** matriz, int n, int m)
+{
+	char titulo[100];
+	char extension[] = ".txt";
+
+	std::cout << "Dame el nombre del archivo donde deseas guardalo: " << std::endl;
+	std::cin >> titulo;
+
+	int i = 0;
+	while (titulo[i] != '\0') 
+	{
+		++i;
+	}
+
+	int j = 0;
+	while (extension[j] != '\0') 
+	{
+		titulo[i] = extension[j];
+		++i;
+		++j;
+	}
+	titulo[i] = '\0';
+
+	std::ofstream archivo(titulo);
+
+	archivo << n << " " << m << '\n';
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			archivo << matriz[i][j] << " ";
+		}
+		archivo << "\n";
+	}
+	archivo.close();
+	std::cout << "Archivo guardado correctamente." << std::endl;
+}
+
 Matriz** MatrizTranspuesta(Matriz** matriz, int n, int m)
 {
 	Matriz** transpuesta = Crear(m, n);
@@ -73,11 +144,8 @@ Matriz** MatrizTranspuesta(Matriz** matriz, int n, int m)
 	}
 	return transpuesta;
 }
-Matriz** SumaMatrices(Matriz** A, Matriz** B, int FilasA, int ColumnasA, int FilasB, int ColumnasB)
+Matriz** SumaMatrices(Matriz** A, Matriz** B, int FilasA, int ColumnasA)
 {
-	if (FilasA != FilasB || ColumnasA != ColumnasB)
-		throw std::exception("No se peuede hacer esta operacion");
-
 	Matriz** resultado = Crear(FilasA, ColumnasA);
 
 	for (int i = 0; i < FilasA; i++)
@@ -90,10 +158,8 @@ Matriz** SumaMatrices(Matriz** A, Matriz** B, int FilasA, int ColumnasA, int Fil
 
 	return resultado;
 }
-Matriz** RestaMatrices(Matriz** A, Matriz** B, int FilasA, int ColumnasA, int FilasB, int ColumnasB)
+Matriz** RestaMatrices(Matriz** A, Matriz** B, int FilasA, int ColumnasA)
 {
-	if (ColumnasA != FilasB) throw std::exception("No se peuede hacer esta operacion");
-
 	Matriz** resultado = Crear(FilasA, ColumnasA);
 
 	for (int i = 0; i < FilasA; i++)
@@ -108,8 +174,6 @@ Matriz** RestaMatrices(Matriz** A, Matriz** B, int FilasA, int ColumnasA, int Fi
 }
 Matriz** MultiplicacionMatrices(Matriz** A, Matriz** B, int FilasA, int ColumnasA, int FilasB, int ColumnasB)
 {
-	if (ColumnasA != FilasB) throw std::exception("No se peuede hacer esta operacion");
-
 	Matriz** resultado = Crear(FilasA, ColumnasB);
 	double suma = 0;
 
@@ -126,7 +190,7 @@ Matriz** MultiplicacionMatrices(Matriz** A, Matriz** B, int FilasA, int Columnas
 	}
 	return resultado;
 }
-Matriz** MultiplicacionEscalar(Matriz** matriz1, double escalar, int n, int m)
+Matriz** MultiplicacionEscalar(Matriz** matriz1, float escalar, int n, int m)
 {
 	Matriz** resultado = Crear(n, m);
 
