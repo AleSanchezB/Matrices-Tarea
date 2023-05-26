@@ -1,7 +1,8 @@
 #include "Utileria.h"
 
-void Rellenar(Matriz** matriz, int n, int m)
+void CapturarMatriz(Matriz** matriz, int n, int m)
 {
+	std::cout << '\n';
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < m; j++)
@@ -11,13 +12,23 @@ void Rellenar(Matriz** matriz, int n, int m)
 		}
 	}
 }
+void Rellenar(Matriz** matriz, int n, int m)
+{
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			matriz[i][j] = (Matriz)(rand() % 1000);
+		}
+	}
+}
 void Imprimir(Matriz** matriz, int n, int m)
 {
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < m; j++)
 		{
-			std::cout << matriz[i][j] << " ";
+			std::cout << matriz[i][j] << "          ";
 		}
 		std::cout << std::endl;
 	}

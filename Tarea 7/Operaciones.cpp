@@ -131,7 +131,50 @@ void GuardarResultadoEnArchivo(Matriz** matriz, int n, int m)
 	archivo.close();
 	std::cout << "Archivo guardado correctamente." << std::endl;
 }
+Matriz** InvertirMatriz(Matriz** A, int n)
+{
+	int i, j, k;
+	float pivote, aux;
+	Matriz** I = Crear(n, n);
+	Matriz** matrizAux = Crear(n, n);
 
+	for (i = 0; i < n; i++)
+	{
+		for (j = 0; j < n; j++)
+		{
+			I[i][j] = 0;
+			matrizAux[i][j] = A[i][j];
+		}
+		I[i][i] = 1;
+	}
+
+	for (i = 0; i < n; i++)
+	{
+		pivote = matrizAux[i][i];
+
+		for (j = 0; j < n; j++)
+		{
+			matrizAux[i][j] = matrizAux[i][j] / pivote;
+			I[i][j] = I[i][j] / pivote;
+		}
+
+		for (j = 0; j < n; j++)
+		{
+			if (i != j)
+			{
+				aux = matrizAux[j][i];
+
+				for (k = 0; k < n; k++)
+				{
+					matrizAux[j][k] = matrizAux[j][k] - aux * matrizAux[i][k];
+					I[j][k] = I[j][k] - aux * I[i][k];
+				}
+			}
+		}
+	}
+	Eliminar(matrizAux, n, n);
+	return I;
+}
 Matriz** MatrizTranspuesta(Matriz** matriz, int n, int m)
 {
 	Matriz** transpuesta = Crear(m, n);
@@ -175,16 +218,15 @@ Matriz** RestaMatrices(Matriz** A, Matriz** B, int FilasA, int ColumnasA)
 Matriz** MultiplicacionMatrices(Matriz** A, Matriz** B, int FilasA, int ColumnasA, int FilasB, int ColumnasB)
 {
 	Matriz** resultado = Crear(FilasA, ColumnasB);
-	double suma = 0;
 
 	for (int i = 0; i < FilasA; i++)
 	{
 		for (int j = 0; j < ColumnasB; j++)
 		{
+			resultado[i][j] = 0;
 			for (int k = 0; k < ColumnasA; k++)
 			{
-				resultado[i][j] += A[i][j] * B[i][j];
-
+				resultado[i][j] += A[i][k] * B[k][j];
 			}
 		}
 	}
@@ -198,7 +240,7 @@ Matriz** MultiplicacionEscalar(Matriz** matriz1, float escalar, int n, int m)
 	{
 		for (int j = 0; j < m; j++)
 		{
-			resultado[i][j] += matriz1[i][j] * escalar;
+			resultado[i][j] = matriz1[i][j] * escalar;
 		}
 	}
 	return resultado;

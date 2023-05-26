@@ -10,9 +10,9 @@ void RestarMatrices(int opcion);
 void MultiaMatrices(int opcion);
 void MultiMatrizEsca(int opcion);
 void TransponerMatriz(int opcion);
-void Inversa();
+void Inversa(int opcion);
 void GuardarResultado(Matriz**, int, int);
-
+void ImprimirTabla(Matriz** matriz, int n, int m);
 void IngresarManual(int[], int[], int);
 
 int menu();
@@ -23,47 +23,46 @@ enum { GMATRIZ = 1, SUMA, RESTA, MM, ME, TRANS, INV, SALIR };
 
 void IngresarManual(int n[], int m[], int indice)
 {
-	std::cout << "Dame el numero filas de la matriz " << indice + 1 << ": " << std::endl;
-	CapturaNumero(n[indice], "", 20);
+	std::cout << "\nDame el numero filas de la matriz " << indice + 1 << ": " << std::endl;
+	CapturaNumero(n[indice], "", MAXTAM);
 
 	std::cout << "Dame el numero columnas de la matriz " << indice + 1 << ": " << std::endl;
-	CapturaNumero(m[indice], "", 20);
+	CapturaNumero(m[indice], "", MAXTAM);
 }
 
 int main()
 {
 	bool salir = false;
 
-	srand(time(NULL));
-	int opcion, opcion2;
+	srand((unsigned int)(time(NULL)));
+	int opcion;
 	while (!salir)
 	{
 		try
 		{
 			opcion = menu();
-			opcion2 = menuLeerMatriz();
 			switch (opcion)
 			{
 			case GMATRIZ:
 				GuardarMatriz();
 				break;
 			case SUMA:
-				SumaMatriz(opcion2);
+				SumaMatriz(menuLeerMatriz());
 				break;
 			case RESTA:
-				RestarMatrices(opcion2);
+				RestarMatrices(menuLeerMatriz());
 				break;
 			case MM:
-				MultiaMatrices(opcion2);
+				MultiaMatrices(menuLeerMatriz());
 				break;
 			case ME:
-				MultiMatrizEsca(opcion2);
+				MultiMatrizEsca(menuLeerMatriz());
 				break;
 			case TRANS:
-				TransponerMatriz(opcion2);
+				TransponerMatriz(menuLeerMatriz());
 				break;
 			case INV:
-				Inversa();
+				Inversa(menuLeerMatriz());
 				break;
 			case SALIR:
 				salir = true;
@@ -73,15 +72,15 @@ int main()
 			}
 			system("cls");
 		}
-		catch (const std::exception& e)
-		{
-			std::cout << "Error: " << e.what() << std::endl;
-			system("pause");
-			system("cls");
-		}
 		catch (const std::bad_alloc& e)
 		{
 			std::cout << "No hay suficiente memoria: " << e.what() << std::endl;
+			system("pause");
+			system("cls");
+		}
+		catch (const std::exception& e)
+		{
+			std::cout << "Error: " << e.what() << std::endl;
 			system("pause");
 			system("cls");
 		}
@@ -116,8 +115,9 @@ int menuLeerMatriz()
 {
 	std::cout << "\n1. Leer matriz desde archivo" << std::endl;
 	std::cout << "2. Ingresar matriz manualmente" << std::endl;
+	std::cout << "3. Generar aleatorio" << std::endl;
 	int opcion;
-	CapturaNumero(opcion, "", 2);
+	CapturaNumero(opcion, "", 3);
 	return opcion;
 }
 
@@ -135,9 +135,10 @@ void SumaMatriz(int opcion)
 	else
 	{
 		IngresarManual(n, m, 0);
-
 		matriz = Crear(n[0], m[0]);
-		Rellenar(matriz, n[0], m[0]);
+		if (opcion == 3) Rellenar(matriz, n[0], m[0]);
+		else
+			CapturarMatriz(matriz, n[0], m[0]);
 	}
 
 	opcion = menuLeerMatriz();
@@ -145,28 +146,30 @@ void SumaMatriz(int opcion)
 	else
 	{
 		IngresarManual(n, m, 1);
-		
 		if (n[0] != n[1] || m[0] != m[1])
 		{
 			Eliminar(matriz, n[0], m[0]);
 			throw std::exception("No se puede hacer esta operacion");
 		}
+
 		matriz2 = Crear(n[0], m[0]);
-		Rellenar(matriz2, n[0], m[0]);
+		if (opcion == 3) Rellenar(matriz2, n[0], m[0]);
+		else
+			CapturarMatriz(matriz2, n[0], m[0]);
 	}
 
 	Matriz** resultado = SumaMatrices(matriz, matriz2, n[0], m[0]);
 
-	std::cout << "matriz 1:" << std::endl;
-	Imprimir(matriz, n[0], m[0]);
-
-	std::cout << "matriz 2:" << std::endl;
+	std::cout << "\nMatriz 1:" << std::endl;
+	//Imprimir(matriz, n[0], m[0]);
+	ImprimirTabla(matriz, n[0], m[0]);
+	std::cout << "\nMatriz 2:" << std::endl;
 	Imprimir(matriz2, n[0], m[0]);
 
-	std::cout << "resultado:" << std::endl;
+	std::cout << "\nResultado:" << std::endl;
 	Imprimir(resultado, n[0], m[0]);
 
-	GuardarResultado(resultado,n[0],m[0]);
+	GuardarResultado(resultado, n[0], m[0]);
 	Eliminar(matriz, n[0], m[0]);
 	Eliminar(matriz2, n[0], m[0]);
 	Eliminar(resultado, n[0], m[0]);
@@ -181,9 +184,10 @@ void RestarMatrices(int opcion)
 	else
 	{
 		IngresarManual(n, m, 0);
-
 		matriz = Crear(n[0], m[0]);
-		Rellenar(matriz, n[0], m[0]);
+		if (opcion == 3) Rellenar(matriz, n[0], m[0]);
+		else
+			CapturarMatriz(matriz, n[0], m[0]);
 	}
 
 	opcion = menuLeerMatriz();
@@ -192,25 +196,27 @@ void RestarMatrices(int opcion)
 	{
 
 		IngresarManual(n, m, 1);
-
 		if (n[0] != n[1] || m[0] != m[1])
 		{
 			Eliminar(matriz, n[0], m[0]);
-			throw std::exception("No se peuede hacer esta operacion");
+			throw std::exception("No se puede hacer esta operacion");
 		}
+
 		matriz2 = Crear(n[0], m[0]);
-		Rellenar(matriz2, n[0], m[0]);
+		if (opcion == 3) Rellenar(matriz2, n[0], m[0]);
+		else
+			CapturarMatriz(matriz2, n[0], m[0]);
 	}
 
 	Matriz** resultado = RestaMatrices(matriz, matriz2, n[0], m[0]);
 
-	std::cout << "matriz 1:" << std::endl;
+	std::cout << "\nMatriz 1:" << std::endl;
 	Imprimir(matriz, n[0], m[0]);
 
-	std::cout << "matriz 2:" << std::endl;
+	std::cout << "\nMatriz 2:" << std::endl;
 	Imprimir(matriz2, n[0], m[0]);
 
-	std::cout << "resultado:" << std::endl;
+	std::cout << "\nResultado:" << std::endl;
 	Imprimir(resultado, n[0], m[0]);
 
 	GuardarResultado(resultado, n[0], m[0]);
@@ -229,9 +235,10 @@ void MultiaMatrices(int opcion)
 	else
 	{
 		IngresarManual(n, m, 0);
-
 		matriz = Crear(n[0], m[0]);
-		Rellenar(matriz, n[0], m[0]);
+		if (opcion == 3) Rellenar(matriz, n[0], m[0]);
+		else
+			CapturarMatriz(matriz, n[0], m[0]);
 	}
 
 	opcion = menuLeerMatriz();
@@ -246,19 +253,21 @@ void MultiaMatrices(int opcion)
 			Eliminar(matriz, n[0], m[0]);
 			throw std::exception("No se peuede hacer esta operacion");
 		}
-		matriz2 = Crear(n[1], m[1]);
-		Rellenar(matriz2, n[1], m[1]);
+		matriz2 = Crear(n[0], m[0]);
+		if (opcion == 3) Rellenar(matriz2, n[0], m[0]);
+		else
+			CapturarMatriz(matriz2, n[0], m[0]);
 	}
 
 	Matriz** resultado = MultiplicacionMatrices(matriz, matriz2, n[0], m[0], n[1], m[1]);
 
-	std::cout << "matriz 1:" << std::endl;
+	std::cout << "\nMatriz 1:" << std::endl;
 	Imprimir(matriz, n[0], m[0]);
 
-	std::cout << "matriz 2:" << std::endl;
+	std::cout << "\nMatriz 2:" << std::endl;
 	Imprimir(matriz2, n[1], m[1]);
 
-	std::cout << "resultado:" << std::endl;
+	std::cout << "\nResultado:" << std::endl;
 	Imprimir(resultado, n[0], m[1]);
 
 	GuardarResultado(resultado, n[0], m[1]);
@@ -277,19 +286,21 @@ void MultiMatrizEsca(int opcion)
 	else
 	{
 		IngresarManual(n, m, 0);
-
 		matriz = Crear(n[0], m[0]);
-		Rellenar(matriz, n[0], m[0]);
+		if (opcion == 3) Rellenar(matriz, n[0], m[0]);
+		else
+			CapturarMatriz(matriz, n[0], m[0]);
 	}
-	std::cout << "Dame el escalar: " << std::endl;
-	CapturaNumero(escalar, "", 3.4e38);
 
-	Matriz** resultado = MultiplicacionEscalar(matriz,escalar ,n[0], m[0]);
+	std::cout << "\nDame el escalar: " << std::endl;
+	CapturaNumero(escalar, "", 600000.f);
 
-	std::cout << "matriz 1:" << std::endl;
+	Matriz** resultado = MultiplicacionEscalar(matriz, escalar, n[0], m[0]);
+
+	std::cout << "\nMatriz 1:" << std::endl;
 	Imprimir(matriz, n[0], m[0]);
 
-	std::cout << "resultado:" << std::endl;
+	std::cout << "\nResultado:" << std::endl;
 	Imprimir(resultado, n[0], m[0]);
 
 	GuardarResultado(resultado, n[0], m[0]);
@@ -297,9 +308,38 @@ void MultiMatrizEsca(int opcion)
 	Eliminar(matriz, n[0], m[0]);
 	Eliminar(resultado, n[0], m[0]);
 }
-void Inversa()
+void Inversa(int opcion)
 {
+	int n[1], m[1];
+	Matriz** matriz;
+	if (opcion == 1) matriz = LeerArchivo(n, m, 0);
+	else
+	{
 
+		IngresarManual(n, m, 0);
+
+		if (m[0] != n[0])
+		{
+			throw std::exception("No se peuede hacer esta operacion");
+		}
+		matriz = Crear(n[0], m[0]);
+		if (opcion == 3) Rellenar(matriz, n[0], m[0]);
+		else
+			CapturarMatriz(matriz, n[0], m[0]);
+	}
+
+	Matriz** resultado = InvertirMatriz(matriz, n[0]);
+
+	std::cout << "\nMatriz:" << std::endl;
+	Imprimir(matriz, n[0], m[0]);
+
+	std::cout << "\nResultado:" << std::endl;
+	Imprimir(resultado, m[0], n[0]);
+
+	GuardarResultado(resultado, m[0], n[0]);
+
+	Eliminar(matriz, n[0], n[0]);
+	Eliminar(resultado, n[0], n[0]);
 }
 void TransponerMatriz(int opcion)
 {
@@ -310,17 +350,18 @@ void TransponerMatriz(int opcion)
 	else
 	{
 		IngresarManual(n, m, 0);
-
 		matriz = Crear(n[0], m[0]);
-		Rellenar(matriz, n[0], m[0]);
+		if (opcion == 3) Rellenar(matriz, n[0], m[0]);
+		else
+			CapturarMatriz(matriz, n[0], m[0]);
 	}
 
 	Matriz** resultado = MatrizTranspuesta(matriz, n[0], m[0]);
 
-	std::cout << "matriz:" << std::endl;
+	std::cout << "\nMatriz:" << std::endl;
 	Imprimir(matriz, n[0], m[0]);
 
-	std::cout << "resultado:" << std::endl;
+	std::cout << "\nResultado:" << std::endl;
 	Imprimir(resultado, m[0], n[0]);
 
 	GuardarResultado(resultado, m[0], n[0]);
@@ -333,9 +374,19 @@ void GuardarResultado(Matriz** matriz, int n, int m)
 {
 	int opcion;
 
-	std::cout << "\nDesea guardar el resultado en un archivo?\n1.- Si\n2.-No" << std::endl;
+	std::cout << "\nDesea guardar el resultado en un archivo?\n1.- Si\n2.- No" << std::endl;
 	CapturaNumero(opcion, "", 2);
 
 	if (opcion == 1)
-		GuardarResultadoEnArchivo(matriz,n,m);
+		GuardarResultadoEnArchivo(matriz, n, m);
+}
+
+void ImprimirTabla(Matriz** matriz, int n, int m)
+{
+	for (int i = 0; i < n; ++i)
+	{
+		std::cout << std::endl << "|";
+		for (int j = 0; j < m; ++j)
+			std::cout << matriz[i][j] << "|";
+	}
 }
