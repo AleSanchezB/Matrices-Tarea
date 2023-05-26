@@ -28,7 +28,7 @@ Matriz** LeerArchivo(int n[], int m[], int indice)
 
 	if (!archivo)
 	{
-		throw std::exception("No se pudo abrir el archivo");
+		throw std::runtime_error("No se pudo abrir el archivo");
 	}
 
 	archivo >> n[indice] >> m[indice];

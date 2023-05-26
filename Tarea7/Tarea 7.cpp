@@ -149,7 +149,7 @@ void SumaMatriz(int opcion)
 		if (n[0] != n[1] || m[0] != m[1])
 		{
 			Eliminar(matriz, n[0], m[0]);
-			throw std::exception("No se puede hacer esta operacion");
+			throw std::runtime_error("No se puede hacer esta operacion");
 		}
 
 		matriz2 = Crear(n[0], m[0]);
@@ -199,7 +199,7 @@ void RestarMatrices(int opcion)
 		if (n[0] != n[1] || m[0] != m[1])
 		{
 			Eliminar(matriz, n[0], m[0]);
-			throw std::exception("No se puede hacer esta operacion");
+			throw std::runtime_error("No se puede hacer esta operacion");
 		}
 
 		matriz2 = Crear(n[0], m[0]);
@@ -251,21 +251,22 @@ void MultiaMatrices(int opcion)
 		if (m[0] != n[1])
 		{
 			Eliminar(matriz, n[0], m[0]);
-			throw std::exception("No se peuede hacer esta operacion");
+			throw std::runtime_error("No se puede hacer esta operacion");
 		}
-		matriz2 = Crear(n[0], m[0]);
-		if (opcion == 3) Rellenar(matriz2, n[0], m[0]);
+		matriz2 = Crear(n[1], m[1]);
+		if (opcion == 3) Rellenar(matriz2, n[1], m[1]);
 		else
-			CapturarMatriz(matriz2, n[0], m[0]);
+			CapturarMatriz(matriz2, n[1], m[1]);
 	}
 
-	Matriz** resultado = MultiplicacionMatrices(matriz, matriz2, n[0], m[0], n[1], m[1]);
 
 	std::cout << "\nMatriz 1:" << std::endl;
 	Imprimir(matriz, n[0], m[0]);
 
 	std::cout << "\nMatriz 2:" << std::endl;
 	Imprimir(matriz2, n[1], m[1]);
+	
+	Matriz** resultado = MultiplicacionMatrices(matriz, matriz2, n[0], m[0], n[1], m[1]);
 
 	std::cout << "\nResultado:" << std::endl;
 	Imprimir(resultado, n[0], m[1]);
@@ -320,7 +321,7 @@ void Inversa(int opcion)
 
 		if (m[0] != n[0])
 		{
-			throw std::exception("No se peuede hacer esta operacion");
+			throw std::runtime_error("No se puede hacer esta operacion");
 		}
 		matriz = Crear(n[0], m[0]);
 		if (opcion == 3) Rellenar(matriz, n[0], m[0]);
