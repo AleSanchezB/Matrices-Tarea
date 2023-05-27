@@ -27,16 +27,6 @@ int menuLeerMatriz();
 
 enum { GMATRIZ = 1, SUMA, RESTA, MM, ME, TRANS, INV, SALIR };
 
-
-void IngresarManual(int n[], int m[], int indice)
-{
-	std::cout << "\nDame el numero filas de la matriz " << indice + 1 << ": " << std::endl;
-	CapturaNumero(n[indice], "", MAXTAM);
-
-	std::cout << "Dame el numero columnas de la matriz " << indice + 1 << ": " << std::endl;
-	CapturaNumero(m[indice], "", MAXTAM);
-}
-
 int main()
 {
 	system("chcp 850");
@@ -105,10 +95,21 @@ int main()
 	return 0;
 }
 
+void IngresarManual(int n[], int m[], int indice)
+{
+	std::cout << "\n------------------------------------------" << std::endl;
+	std::cout << "Dame el n\243mero filas de la matriz " << indice + 1 << ": " << std::endl;
+	CapturaNumero(n[indice], "", MAXTAM);
+	std::cout << "------------------------------------------" << std::endl;
+	std::cout << "Dame el n\243mero columnas de la matriz " << indice + 1 << ": " << std::endl;
+	CapturaNumero(m[indice], "", MAXTAM);
+}
+
+
 int menu()
 {
 	int opcion;
-	std::cout << "------- Men\243 -------" << std::endl;
+	std::cout << "------------------ Men\243 ------------------" << std::endl;
 	std::cout << "1. Guardar una matriz en un archivo." << std::endl;
 	std::cout << "2. Sumar dos matrices." << std::endl;
 	std::cout << "3. Restar dos matrices." << std::endl;
@@ -117,15 +118,18 @@ int menu()
 	std::cout << "6. Transponer una matriz." << std::endl;
 	std::cout << "7. Invertir una matriz." << std::endl;
 	std::cout << "8. Salir del programa." << std::endl;
+	std::cout << "------------------------------------------" << std::endl;
 	CapturaNumero(opcion, "", 8);
 	return opcion;
 }
 
 int menuLeerMatriz()
 {
-	std::cout << "\n1. Leer matriz desde archivo" << std::endl;
+	std::cout << "\n------------------------------------------" << std::endl;
+	std::cout << "1. Leer matriz desde archivo" << std::endl;
 	std::cout << "2. Ingresar matriz manualmente" << std::endl;
 	std::cout << "3. Generar aleatorio" << std::endl;
+	std::cout << "------------------------------------------" << std::endl;
 	int opcion;
 	CapturaNumero(opcion, "", 3);
 	return opcion;
@@ -338,7 +342,19 @@ void Inversa(int opcion)
 			CapturarMatriz(matriz, n[0], m[0]);
 	}
 
-	Matriz** resultado = InvertirMatriz(matriz, n[0]);
+	Matriz** resultado = Crear(n[0], n[0]); //InvertirMatriz(matriz, n[0]);
+	Matriz** matrizAux = Crear(n[0], n[0]);
+	for (int i = 0; i < n[0]; i++)
+	{
+		for (int j = 0; j < n[0]; j++)
+		{
+			resultado[i][j] = 0;
+			matrizAux[i][j] = matriz[i][j];
+		}
+		resultado[i][i] = 1;
+	}
+
+	InversaM(matrizAux,resultado,n[0]);
 
 	std::cout << "\nMatriz:" << std::endl;
 	Imprimir(matriz, n[0], m[0]);
@@ -349,6 +365,7 @@ void Inversa(int opcion)
 	GuardarResultado(resultado, m[0], n[0]);
 
 	Eliminar(matriz, n[0], n[0]);
+	Eliminar(matrizAux, n[0], n[0]);
 	Eliminar(resultado, n[0], n[0]);
 }
 void TransponerMatriz(int opcion)

@@ -132,6 +132,103 @@ void GuardarResultadoEnArchivo(Matriz** matriz, int n, int m)
 	std::cout << "Archivo guardado correctamente." << std::endl;
 	system("pause");
 }
+
+Matriz Determinante(Matriz** matriz, int n)
+{
+	if (n == 1) 
+	{
+		// Caso base: matriz de 1x1
+		return matriz[0][0];
+	}
+	else 
+	{
+		Matriz det = 0;
+		Matriz** submatriz = Crear(n - 1, n - 1);
+
+		for (int i = 0; i < n; ++i) {
+			// Obtiene la submatriz eliminando la primera fila y la columna i
+			int submatriz_fila = 0;
+			for (int j = 1; j < n; ++j) 
+			{
+				int submatriz_columna = 0;
+				for (int k = 0; k < n; ++k) 
+				{
+					if (k != i) 
+					{
+						submatriz[submatriz_fila][submatriz_columna] = matriz[j][k];
+						++submatriz_columna;
+					}
+				}
+				++submatriz_fila;
+			}
+
+			// Calcula el cofactor como el determinante de la submatriz con signo alternante
+			int signo = (i % 2 == 0) ? 1 : -1;
+			Matriz cofactor = Determinante(submatriz, n - 1);
+			det += signo * matriz[0][i] * cofactor;
+		}
+
+		Eliminar(submatriz, n - 1, n-1);
+		return det;
+	}
+}
+
+
+void InversaM(Matriz** matriz, Matriz** identidad, int n)
+{
+	if (Determinante(matriz, n) == 0)
+		throw std::runtime_error("Esta matriz no tiene inversa");
+
+	float aux, pivote;
+	int fila_pivote;
+
+	for (int i = 0; i < n; ++i) 
+	{
+		// Pivoteo parcial
+		fila_pivote = i;
+		while (matriz[fila_pivote][i] == 0) 
+		{
+			fila_pivote++;
+			if (fila_pivote >= n)
+				throw std::runtime_error("Esta matriz no tiene inversa");
+		}
+		// Intercambiar filas
+		for (int j = 0; j < n; ++j) 
+		{
+			aux = matriz[i][j];
+			matriz[i][j] = matriz[fila_pivote][j];
+			matriz[fila_pivote][j] = aux;
+
+			aux = identidad[i][j];
+			identidad[i][j] = identidad[fila_pivote][j];
+			identidad[fila_pivote][j] = aux;
+		}
+
+		pivote = matriz[i][i];
+
+		// Haciendo los 1's principales.
+		for (int j = 0; j < n; ++j) 
+		{
+			matriz[i][j] /= pivote;
+			identidad[i][j] /= pivote;
+		}
+
+		// Reducir a cero arriba y abajo del 1 principal
+		for (int j = 0; j < n; ++j) 
+		{
+			if (i != j) 
+			{
+				aux = matriz[j][i];
+				for (int k = 0; k < n; ++k) 
+				{
+					matriz[j][k] -= aux * matriz[i][k];
+					identidad[j][k] -= aux * identidad[i][k];
+				}
+			}
+		}
+	}
+}
+
 Matriz** InvertirMatriz(Matriz** A, int n)
 {
 	int i, j, k;

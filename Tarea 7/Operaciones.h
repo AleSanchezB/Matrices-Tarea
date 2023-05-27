@@ -8,7 +8,7 @@ void GuardarResultadoEnArchivo(Matriz** matriz, int n, int m);
 Matriz** LeerArchivo(int n[], int m[], int indice);
 
 Matriz** MatrizTranspuesta(Matriz**, int, int);
-
+void InversaM(Matriz** matriz, Matriz** identidad, int n);
 Matriz** MultiplicacionMatrices(Matriz**, Matriz**, int, int, int, int);
 Matriz** RestaMatrices(Matriz**, Matriz**, int, int);
 Matriz** SumaMatrices(Matriz**, Matriz**, int, int);
