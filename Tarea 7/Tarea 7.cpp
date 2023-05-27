@@ -1,6 +1,14 @@
+/*
+Nombre: Tarea 7. La matriz recargada
+Descripción: Este programa hace diferentes operaciones, como puede ser lo básico, suma y resta matrices
+			 multipliacion, multiplicar matriz por escalar, invertir matriz y transponer matriz.
+Fecha: 26/05/23
+Autor: Braulio Alessandro Sanchez Bermudez
+*/
+
+
 #include <iostream>
 #include <fstream>
-
 #include "Operaciones.h"
 
 
@@ -12,7 +20,6 @@ void MultiMatrizEsca(int opcion);
 void TransponerMatriz(int opcion);
 void Inversa(int opcion);
 void GuardarResultado(Matriz**, int, int);
-void ImprimirTabla(Matriz** matriz, int n, int m);
 void IngresarManual(int[], int[], int);
 
 int menu();
@@ -32,6 +39,9 @@ void IngresarManual(int n[], int m[], int indice)
 
 int main()
 {
+	system("chcp 850");
+	system("cls");
+
 	bool salir = false;
 
 	srand((unsigned int)(time(NULL)));
@@ -98,7 +108,7 @@ int main()
 int menu()
 {
 	int opcion;
-	std::cout << "------- Menú -------" << std::endl;
+	std::cout << "------- Men\243 -------" << std::endl;
 	std::cout << "1. Guardar una matriz en un archivo." << std::endl;
 	std::cout << "2. Sumar dos matrices." << std::endl;
 	std::cout << "3. Restar dos matrices." << std::endl;
@@ -149,7 +159,7 @@ void SumaMatriz(int opcion)
 		if (n[0] != n[1] || m[0] != m[1])
 		{
 			Eliminar(matriz, n[0], m[0]);
-			throw std::exception("No se puede hacer esta operacion");
+			throw std::runtime_error("No se puede hacer esta operaci\242n");
 		}
 
 		matriz2 = Crear(n[0], m[0]);
@@ -161,8 +171,7 @@ void SumaMatriz(int opcion)
 	Matriz** resultado = SumaMatrices(matriz, matriz2, n[0], m[0]);
 
 	std::cout << "\nMatriz 1:" << std::endl;
-	//Imprimir(matriz, n[0], m[0]);
-	ImprimirTabla(matriz, n[0], m[0]);
+	Imprimir(matriz, n[0], m[0]);
 	std::cout << "\nMatriz 2:" << std::endl;
 	Imprimir(matriz2, n[0], m[0]);
 
@@ -199,7 +208,7 @@ void RestarMatrices(int opcion)
 		if (n[0] != n[1] || m[0] != m[1])
 		{
 			Eliminar(matriz, n[0], m[0]);
-			throw std::exception("No se puede hacer esta operacion");
+			throw std::runtime_error("No se puede hacer esta operaci\242n");
 		}
 
 		matriz2 = Crear(n[0], m[0]);
@@ -251,21 +260,22 @@ void MultiaMatrices(int opcion)
 		if (m[0] != n[1])
 		{
 			Eliminar(matriz, n[0], m[0]);
-			throw std::exception("No se peuede hacer esta operacion");
+			throw std::runtime_error("No se puede hacer esta operaci\242n");
 		}
-		matriz2 = Crear(n[0], m[0]);
-		if (opcion == 3) Rellenar(matriz2, n[0], m[0]);
+		matriz2 = Crear(n[1], m[1]);
+		if (opcion == 3) Rellenar(matriz2, n[1], m[1]);
 		else
-			CapturarMatriz(matriz2, n[0], m[0]);
+			CapturarMatriz(matriz2, n[1], m[1]);
 	}
 
-	Matriz** resultado = MultiplicacionMatrices(matriz, matriz2, n[0], m[0], n[1], m[1]);
 
 	std::cout << "\nMatriz 1:" << std::endl;
 	Imprimir(matriz, n[0], m[0]);
 
 	std::cout << "\nMatriz 2:" << std::endl;
 	Imprimir(matriz2, n[1], m[1]);
+
+	Matriz** resultado = MultiplicacionMatrices(matriz, matriz2, n[0], m[0], n[1], m[1]);
 
 	std::cout << "\nResultado:" << std::endl;
 	Imprimir(resultado, n[0], m[1]);
@@ -293,11 +303,11 @@ void MultiMatrizEsca(int opcion)
 	}
 
 	std::cout << "\nDame el escalar: " << std::endl;
-	CapturaNumero(escalar, "", 600000.f);
+	CapturaNumero(escalar, "", 600000.f, -600000.f);
 
 	Matriz** resultado = MultiplicacionEscalar(matriz, escalar, n[0], m[0]);
 
-	std::cout << "\nMatriz 1:" << std::endl;
+	std::cout << "\nMatriz 1 por Escalar " << escalar << " :" << std::endl;
 	Imprimir(matriz, n[0], m[0]);
 
 	std::cout << "\nResultado:" << std::endl;
@@ -320,7 +330,7 @@ void Inversa(int opcion)
 
 		if (m[0] != n[0])
 		{
-			throw std::exception("No se peuede hacer esta operacion");
+			throw std::runtime_error("No se puede hacer esta operaci\242n");
 		}
 		matriz = Crear(n[0], m[0]);
 		if (opcion == 3) Rellenar(matriz, n[0], m[0]);
@@ -374,19 +384,9 @@ void GuardarResultado(Matriz** matriz, int n, int m)
 {
 	int opcion;
 
-	std::cout << "\nDesea guardar el resultado en un archivo?\n1.- Si\n2.- No" << std::endl;
+	std::cout << "\n¿Desea guardar el resultado en un archivo?\n1.- Si\n2.- No" << std::endl;
 	CapturaNumero(opcion, "", 2);
 
 	if (opcion == 1)
 		GuardarResultadoEnArchivo(matriz, n, m);
-}
-
-void ImprimirTabla(Matriz** matriz, int n, int m)
-{
-	for (int i = 0; i < n; ++i)
-	{
-		std::cout << std::endl << "|";
-		for (int j = 0; j < m; ++j)
-			std::cout << matriz[i][j] << "|";
-	}
 }

@@ -8,7 +8,7 @@ Matriz** LeerArchivo(int n[], int m[], int indice)
 
 	std::cout << "Ingrese el nombre del archivo a leer: " << std::endl;
 	std::cin >> titulo;
-	
+
 	int i = 0;
 	while (titulo[i] != '\0')
 	{
@@ -28,7 +28,7 @@ Matriz** LeerArchivo(int n[], int m[], int indice)
 
 	if (!archivo)
 	{
-		throw std::exception("No se pudo abrir el archivo");
+		throw std::runtime_error("No se pudo abrir el archivo");
 	}
 
 	archivo >> n[indice] >> m[indice];
@@ -103,13 +103,13 @@ void GuardarResultadoEnArchivo(Matriz** matriz, int n, int m)
 	std::cin >> titulo;
 
 	int i = 0;
-	while (titulo[i] != '\0') 
+	while (titulo[i] != '\0')
 	{
 		++i;
 	}
 
 	int j = 0;
-	while (extension[j] != '\0') 
+	while (extension[j] != '\0')
 	{
 		titulo[i] = extension[j];
 		++i;
@@ -130,6 +130,7 @@ void GuardarResultadoEnArchivo(Matriz** matriz, int n, int m)
 	}
 	archivo.close();
 	std::cout << "Archivo guardado correctamente." << std::endl;
+	system("pause");
 }
 Matriz** InvertirMatriz(Matriz** A, int n)
 {
